@@ -1,0 +1,29 @@
+{"event_type":"person_event", "age":100, "name":"testname1"}
+{"event_type":"person_event", "age":200, "name":"testname2"}
+{"event_type":"person_event2", "age":200, "gender":"female"}
+{"event_type":"quit", "quit":"quit"}
+
+select * from person_event (age>=100)
+select avg(age) from person_event
+
+air_quality
+select * from air_quality (parameter='pm25')
+select avg(value) as avgValue,city from air_quality (city='Beijing') output when local = '2016-12-01T00:00:00+08:00'
+select avg(value) as avgValue,city from air_quality (city='Shanghai') output when local = '2016-12-01T00:00:00+08:00'
+select avgValue,city from air_quality order by avgValue
+
+select ts,index,bm05,bm06,bm07,bm08,bm09,bm10 from CDataPoint
+String epl1 = "select ts,index,bm05,sum(bm05) as sumbm05 from CDataPoint#length(2) having sum(bm05)=1";
+String epl2 = "select ts,index,bm08,sum(bm08) as sumbm08 from CDataPoint#length(2) having sum(bm08)=1";
+String epl3 = "select (C05DataPoint.ts-C08DataPoint.ts) as ts58 from C05DataPoint#lastevent,C08DataPoint#lastevent";
+String epl4 = "insert into Alarm58DataPoint (alarm,ts58) select 1,ts58 from C58DataPoint where ts58>1.01*(select ts58 from C58DataPoint#length(2)).firstOf()";
+
+String epl5 = "select ts,index,bm06,sum(bm06) as sumbm06 from CDataPoint#length(2) having sum(bm06)=1";
+String epl6 = "select ts,index,bm09,sum(bm09) as sumbm09 from CDataPoint#length(2) having sum(bm09)=1";
+String epl7 = "select (C06DataPoint.ts-C09DataPoint.ts) as ts69 from C06DataPoint#lastevent,C09DataPoint#lastevent";
+String epl8 = "insert into Alarm69DataPoint (alarm,ts69) select 1,ts69 from C69DataPoint where ts69>1.01*(select ts69 from C69DataPoint#length(2)).firstOf()";
+
+String epl9 = "select ts,index,bm07,sum(bm07) as sumbm07 from CDataPoint#length(2) having sum(bm07)=1";
+String epl10 = "select ts,index,bm10,sum(bm10) as sumbm10 from CDataPoint#length(2) having sum(bm10)=1";
+String epl11 = "select (C07DataPoint.ts-C10DataPoint.ts) as ts710 from C07DataPoint#lastevent,C10DataPoint#lastevent";
+String epl12 = "insert into Alarm710DataPoint (alarm,ts710) select 1,ts710 from C710DataPoint where ts710>1.01*(select ts710 from C710DataPoint#length(2)).firstOf()";
