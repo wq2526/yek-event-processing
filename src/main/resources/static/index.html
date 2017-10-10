@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>index</title>
+    <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="lib/bootstrap/font-awesome.min.css"/>
+    <link rel="stylesheet" href="lib/codemirror/codemirror.css"/>
+
+    <link rel="stylesheet" href="css/main.css"/>
+    <link rel="stylesheet" href="css/toolbar.css"/>
+    <link rel="stylesheet" href="css/q-panel.css"/>
+
+    <script src="lib/javascript.js"></script>
+    <script type="text/javascript" src="lib/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/bootstrap/bootstrap.min.js"></script>
+    <script type="text/javascript" src="lib/qunee/qunee-min.js"></script>
+    <script src="lib/codemirror/codemirror.js"></script>
+
+    <script src="js/dag.js"></script>
+    <script src="images/nodesvg.js"></script>
+
+</head>
+<body>
+
+<header id="header" class="navbar navbar-fixed-top">
+    <div class="page-header">
+        <h1>Dashbord <small>complex event processing</small></h1>
+    </div>
+</header>
+
+<div id="page">
+    <div id="left_panel">
+        <div class="navbar" id="node_navbar">
+            <table class="table table-hover">
+                <tr><th id="nodes"><a href="#">nodes</a></th></tr>
+                <tr><td id="nodeList"><i class="icon-list"></i> <a href="#">node list</a></td></tr>
+                <tr><td id="addDag"><i class="icon-plus"></i> <a href="#">new</a></td></tr>
+            </table>
+        </div>
+    </div>
+    <div id="right_panel">
+        <div>
+            <ol id="dag_title" class="breadcrumb" style="float: left">
+                <li class="active">DAG</li>
+            </ol>
+            <div style="clear:both;"></div>
+        </div>
+        <div id="graph_panel" class="q-panel">
+            <div role="toolbar" class="q-toolbar">
+                <div>
+                    <div id="toolbar">
+                        <div class="btn-group">
+                            <div class="btn btn-default btn-sm" title="default" id="default">
+                                <div class="q-icon toolbar-default"></div>
+                            </div>
+                            <div class="btn btn-default btn-sm" title="add node" id="add">
+                                <div class="q-icon toolbar-add"></div>
+                            </div>
+                            <div class="btn btn-default btn-sm" title="create edge" id="edge">
+                                <div class="q-icon toolbar-edge"></div>
+                            </div>
+                            <div class="btn btn-default btn-sm" title="remove" id="remove">
+                                <div class="q-icon toolbar-remove"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="q-content">
+                <div id="canvas"></div>
+            </div>
+        </div>
+        <div id="node_list">
+            <table class="table table-bordered" id="node_table"></table>
+            <div id="return"><a href="#"><i class="icon-reply"></i></a></div>
+            <div class="btn btn-default" title="remove" id="submit">Submit</div>
+        </div>
+        <div id="node_configuration">
+            <form>
+                <div class="form-group">
+                    <label>Node Name</label>
+                    <input type="text" class="form-control" id="node_name_input" placeholder="Node Name">
+                </div>
+                <div id="add_event_type"><a href="#"><i class="icon-plus-sign"></i>add event type</a></div>  
+                <div id="add_event_processor"><a href="#"><i class="icon-plus-sign"></i>add event processor</a></div>
+                <div class="form-group">
+                    <label>Output Event Type</label>
+                    <input type="text" class="form-control" id="out_type" placeholder="Output Event Type">
+                </div>
+                <div class="form-group">
+                    <label>Node Num</label>
+                    <input type="text" class="form-control" id="node_num" placeholder="Node Num">
+                </div>
+                <button type="button" class="btn btn-default" id="save">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div style="clear:both;"></div>
+
+<div style="clear:both;"></div>
+
+</body>
+</html>

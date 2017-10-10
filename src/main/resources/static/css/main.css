@@ -1,0 +1,111 @@
+
+body {
+    font-family: "Open Sans", "Microsoft YaHei", "Hiragino Sans GB", "Hiragino Sans GB W3", "微软雅黑", "Helvetica Neue", Arial, sans-serif;
+    color: #666666;
+}
+a:link {
+    text-decoration:none;
+}
+a:visited {
+    text-decoration:none;
+}
+a:hover {
+    text-decoration:none;
+}
+a:active {
+    text-decoration:none;
+}
+p {
+    line-height: 1.7em;
+}
+.logo {
+    background-image: url(../images/logo-retina.png);
+    background-size: 200px 32px;
+    width: 200px;
+    height: 32px;
+}
+header.navbar {
+    background-color: #FFF;
+    transition: background-color 0.5s ease-in-out;
+    -webkit-transition: background-color 0.5s ease-in-out;
+    -moz-transition: background-color 0.5s ease-in-out;
+    margin: 0px auto;
+    min-width: 1000px;
+    padding: 0px 20px;
+}
+
+#page {
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 15px;
+    margin: 0px auto;
+    position: relative;
+    padding-top: 120px;
+    min-width: 1000px;
+}
+#left_panel {
+    padding-right: 5px;
+    width: 24%;
+    float: left;
+}
+#node_navbar {
+    padding: 10px 15px;
+}
+#title {
+    display: inline-block;
+    color: #777;
+    margin-top: 15px;
+    text-align: center;
+    font-size: 1.1em;
+}
+
+#right_panel, #node_list {
+    padding-left: 5px;
+    width: 76%;
+    float: left;
+}
+.breadcrumb > .active {
+    font-size: 1.5em;
+}
+.breadcrumb {
+    padding: 0px;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    text-align: left;
+    background-color: transparent;
+}
+#graph_panel {
+    height: 650px;
+}
+
+#return {
+    padding: 0px;
+    float:left;
+}
+
+#canvas {
+    outline: none;
+    height: 100%;
+}
+#submit {
+    float:right;
+}
+
+.prop-inline {
+    margin-bottom: 5px;
+}
+.prop-inline label {
+    font-weight:normal;
+    font-size:12px;
+    display: inline-block;
+}
+.prop-inline input {
+    width: auto;
+    display: inline-block;
+}
+.prop-inline select {
+    width: auto;
+    display: inline-block;
+}
+
+
