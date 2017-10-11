@@ -83,6 +83,7 @@ public class EsperYarnClient {
 	private String groupId;
 	private String inputTopic;
 	private String outputTopic;
+	private String parents;
 	
 	public EsperYarnClient() {
 		conf = new YarnConfiguration();
@@ -119,10 +120,11 @@ public class EsperYarnClient {
 		groupId = "";
 		inputTopic = "";
 		outputTopic = "";
+		parents = "";
 		
 	}
 	
-	private boolean init(String json, String input, String output, int priority) throws JSONException {
+	private boolean init(String json, String input, String output, String parents) throws JSONException {
 		
 		kafkaServer = "10.109.253.127:9092";
 		
@@ -139,6 +141,8 @@ public class EsperYarnClient {
 		
 		inputTopic = input;
 		outputTopic = output;
+		
+		parents = "'" + parents + "'";
 		
 		appName = "esperApp";
 		amPriority = 0;
@@ -285,6 +289,7 @@ public class EsperYarnClient {
 		commands.add("--group_id " + groupId);
 		commands.add("--input_topic " + inputTopic);
 		commands.add("--output_topic " + outputTopic);
+		commands.add("--parents " + parents);
 		
 		LOG.info("Completed setting up app master command " + commands.toString());
 		
@@ -382,13 +387,13 @@ public class EsperYarnClient {
 		yarnClient.killApplication(appId);
 	}
 	
-	public void runYarnClient(String json, String input, String output, int priority) {
+	public void runYarnClient(String json, String input, String output, String parents) {
 		boolean result = false;
 		
 		try {
 			LOG.info("Initializing Client");
 			try {
-				boolean doRun = init(json, input, output, priority);
+				boolean doRun = init(json, input, output, parents);
 				if(!doRun){
 					System.exit(0);
 				}

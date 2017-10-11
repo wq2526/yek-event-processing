@@ -9,12 +9,12 @@ public class DAG {
 	
 	private String name;
 	
-	private Map<String, Vertex> vertices;
+	private Map<Integer, Vertex> vertices;
 	private Set<Edge> edges;
 	
 	private DAG(String name) {
 		this.name = name;
-		vertices = new HashMap<String, Vertex>();
+		vertices = new HashMap<Integer, Vertex>();
 		edges = new HashSet<Edge>();
 	}
 	
@@ -26,17 +26,17 @@ public class DAG {
 		if(vertices.containsKey(vertex.getVertexName()))
 			throw new IllegalStateException(
 			        "Vertex " + vertex.getVertexName() + " already defined!");
-		vertices.put(vertex.getVertexName(), vertex);
+		vertices.put(vertex.getId(), vertex);
 	}
 	
 	public void addEdge(Edge edge) {
-		if(!vertices.containsKey(edge.getInputVertex().getVertexName()))
+		/*if(!vertices.containsKey(edge.getInputVertex().getVertexName()))
 			throw new IllegalArgumentException(
 			        "Input vertex " + edge.getInputVertex() + " doesn't exist!");
 		
 		if(!vertices.containsKey(edge.getOutputVertex().getVertexName()))
 			throw new IllegalArgumentException(
-			        "Output vertex " + edge.getOutputVertex() + " doesn't exist!");
+			        "Output vertex " + edge.getOutputVertex() + " doesn't exist!");*/
 		
 		if(edges.contains(edge))
 			throw new IllegalArgumentException(
@@ -53,26 +53,22 @@ public class DAG {
 		return name;
 	}
 	
-	public Vertex getVertex(String name) {
-		return vertices.get(name);
+	public Vertex getVertex(int id) {
+		return vertices.get(id);
 	}
 	
 	public Set<Vertex> getVertices() {
 		Set<Vertex> vs = new HashSet<Vertex>();
-		for(String name : vertices.keySet()){
-			vs.add(vertices.get(name));
+		for(int id : vertices.keySet()){
+			vs.add(vertices.get(id));
 		}
 		return vs;
 	}
 	
-	public String convertToJson() {
-		
-		String dagJson = "";
-		
-		
-		
-		return dagJson;
-		
+	public boolean containsVertex(int id) {
+		if(vertices.containsKey(id))
+			return true;
+		return false;
 	}
 
 }
