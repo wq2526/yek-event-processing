@@ -84,6 +84,7 @@ public class EsperYarnClient {
 	private String inputTopic;
 	private String outputTopic;
 	private String parents;
+	private String nodeName;
 	
 	public EsperYarnClient() {
 		conf = new YarnConfiguration();
@@ -107,7 +108,7 @@ public class EsperYarnClient {
 		containerPriority = 0;
 		
 		clientStartTime = System.currentTimeMillis();
-		clientTimeOut = 120000;
+		clientTimeOut = 60000;
 		
 		esperEngineJarPath = "";
 		esperEngineMainClass = "";
@@ -121,10 +122,11 @@ public class EsperYarnClient {
 		inputTopic = "";
 		outputTopic = "";
 		parents = "";
+		nodeName = "";
 		
 	}
 	
-	private boolean init(String json, String input, String output, String parents) throws JSONException {
+	private boolean init(String json, String input, String output, String parentNodes) throws JSONException {
 		
 		kafkaServer = "10.109.253.127:9092";
 		
@@ -142,7 +144,11 @@ public class EsperYarnClient {
 		inputTopic = input;
 		outputTopic = output;
 		
-		parents = "'" + parents + "'";
+		parents = parentNodes;
+		if(parents.equals("[]"))parents = "[\"null\"]";
+		parents = "'" + parents.replaceAll("\"", "%") + "'";
+		
+		nodeName = node.getString("name");
 		
 		appName = "esperApp";
 		amPriority = 0;
@@ -290,6 +296,7 @@ public class EsperYarnClient {
 		commands.add("--input_topic " + inputTopic);
 		commands.add("--output_topic " + outputTopic);
 		commands.add("--parents " + parents);
+		commands.add("--node_name " + nodeName);
 		
 		LOG.info("Completed setting up app master command " + commands.toString());
 		
@@ -387,13 +394,13 @@ public class EsperYarnClient {
 		yarnClient.killApplication(appId);
 	}
 	
-	public void runYarnClient(String json, String input, String output, String parents) {
+	public void runYarnClient(String json, String input, String output, String parentNodes) {
 		boolean result = false;
 		
 		try {
 			LOG.info("Initializing Client");
 			try {
-				boolean doRun = init(json, input, output, parents);
+				boolean doRun = init(json, input, output, parentNodes);
 				if(!doRun){
 					System.exit(0);
 				}

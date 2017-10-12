@@ -50,7 +50,7 @@ public class DAGController {
 	public void startYarnClient(@RequestParam(value="data") String json) throws JSONException {
 		
 		exec = Executors.newCachedThreadPool();
-		//exec.execute(new KafkaRunnable());
+		exec.execute(new KafkaRunnable());
 		
 		JSONObject jsonObject = new JSONObject(json);
 		JSONArray jsonArray = jsonObject.getJSONArray("nodes");
@@ -64,18 +64,21 @@ public class DAGController {
 			String output = vertex.getDataSink().getOutputTopic();
 			
 			StringBuilder parents = new StringBuilder();
+			parents.append("[");
 			List<Edge> edges = vertex.getInputEdges();
 			for(Edge edge : edges){
-				parents.append(edge.getInputVertex().getVertexName()).append(",");
+				parents.append("\"").append(edge.getInputVertex().getVertexName())
+				.append("\"").append(",");
 			}
+			parents.append("]");
 			
 			LOG.info("send json to yarn client: " + nodeJson.toString() + 
 					"for input " + input +
 					" output " + output +
 					" parents " + parents.toString());	
 			
-			//exec.execute(new YarnClientRunnable(nodeJson.toString(), input, 
-					//output, parents.toString()));
+			exec.execute(new YarnClientRunnable(nodeJson.toString(), input, 
+					output, parents.toString()));
 			
 		}
 		
@@ -246,7 +249,7 @@ public class DAGController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
-				client.produce(null, "{\"event_type\":\"quit\",\"quit\":\"quit\"}", "topic-0");
+				client.produce(null, "{\"event_type\":\"quit\",\"quit\":\"null\"}", "topic-0");
 				client.close();
 			}
 			
