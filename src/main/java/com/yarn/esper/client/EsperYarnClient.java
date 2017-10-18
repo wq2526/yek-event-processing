@@ -167,7 +167,7 @@ public class EsperYarnClient {
 		containerPriority = 0;
 		
 		esperEngineJarPath = "/usr/esper/apps/esper-kafka-engine.jar";
-		esperEngineMainClass = "com.esper.kafka.adapters.EsperKafkaAdapters";
+		esperEngineMainClass = "com.esper.kafka.adapter.EsperKafkaAdapter";
 		
 		return true;
 	}

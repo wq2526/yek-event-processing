@@ -77,8 +77,9 @@ public class DAGController {
 					" output " + output +
 					" parents " + parents.toString());	
 			
-			exec.execute(new YarnClientRunnable(nodeJson.toString(), input, 
-					output, parents.toString()));
+			/*exec.execute(new YarnClientRunnable(nodeJson.toString(), input, 
+					output, parents.toString()));*/
+			new EsperYarnClient().runYarnClient(nodeJson.toString(), input, output, parents.toString());
 			
 		}
 		
