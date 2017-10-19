@@ -51,136 +51,21 @@ public class DAGController {
 		
 		exec = Executors.newCachedThreadPool();
 		exec.execute(new KafkaRunnable());
-		
-		JSONObject jsonObject = new JSONObject(json);
-		JSONArray jsonArray = jsonObject.getJSONArray("nodes");
-		
-		DAG dag = convertToDag(json);
-		for(int i=0;i<jsonArray.length();i++){
-			JSONObject nodeJson = jsonArray.getJSONObject(i);
-			int nodeId = nodeJson.getInt("id");
-			Vertex vertex = dag.getVertex(nodeId);
-			String input = vertex.getDataSource().getInputTopic();
-			String output = vertex.getDataSink().getOutputTopic();
 			
-			StringBuilder parents = new StringBuilder();
-			parents.append("[");
-			List<Edge> edges = vertex.getInputEdges();
-			for(Edge edge : edges){
-				parents.append("\"").append(edge.getInputVertex().getVertexName())
-				.append("\"").append(",");
-			}
-			parents.append("]");
+		LOG.info("send json to yarn client: " + json);	
 			
-			LOG.info("send json to yarn client: " + nodeJson.toString() + 
-					"for input " + input +
-					" output " + output +
-					" parents " + parents.toString());	
-			
-			/*exec.execute(new YarnClientRunnable(nodeJson.toString(), input, 
-					output, parents.toString()));*/
-			new EsperYarnClient().runYarnClient(nodeJson.toString(), input, output, parents.toString());
-			
-		}
-		
-	}
-	
-	private DAG convertToDag(String json) throws JSONException {
-		
-		DAG dag = DAG.create("dag");
-		
-		JSONObject jsonObject = new JSONObject(json);
-		JSONArray jsonArray = jsonObject.getJSONArray("nodes");
-		
-		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-		for(int i=0;i<jsonArray.length();i++){
-			JSONObject nodeJson = jsonArray.getJSONObject(i);
-			int id = nodeJson.getInt("id");
-			
-			String inputTopic = "topic-";
-			String outputTopic = "topic-";
-			int level = 0;
-			if(map.containsKey(id)){
-				level = map.get(id);
-			}else{
-				level = 0;
-			}
-			inputTopic = inputTopic + level;
-			outputTopic = outputTopic + (level+1);
-			
-			String name = nodeJson.getString("name");
-			Vertex vertex = null;
-			if(dag.containsVertex(id)){
-				vertex = dag.getVertex(id);
-			}else{
-				vertex = Vertex.create(id);
-				dag.addVertex(vertex);
-			}	
-			vertex.setVertexName(name);
-			JSONArray children = nodeJson.getJSONArray("children");
-			for(int j=0;j<children.length();j++){
-				map.put(children.getInt(j), level+1);
-				int cid = children.getInt(j);
-				Vertex child = null;
-				if(dag.containsVertex(cid)){
-					child = dag.getVertex(cid);
-				}else{
-					child = Vertex.create(cid);
-					dag.addVertex(child);
-				}
-				Edge edge = Edge.create(vertex, child);
-				dag.addEdge(edge);
-			}
-			
-			EsperKafkaInput input = new EsperKafkaInput(inputTopic);
-			EsperKafkaOutput output = new EsperKafkaOutput(outputTopic);
-			
-			vertex.setDataSource(input);
-			vertex.setDataSink(output);
-			
-			EsperKafkaProcessor processor = new EsperKafkaProcessor();
-			JSONArray eventTypes = nodeJson.getJSONArray("event_types");
-			for(int j=0;j<eventTypes.length();j++){
-				JSONObject eventType = eventTypes.getJSONObject(j);
-				String eventName = eventType.getString("event_type");
-				EventType type = new EventType(eventName);
-				JSONArray props = eventType.getJSONArray("event_props");
-				for(int k=0;k<props.length();k++){
-					type.addProp(props.getString(k));
-				}
-				JSONArray classes = eventType.getJSONArray("event_classes");
-				for(int k=0;k<classes.length();k++){
-					type.addClass(classes.getString(k));
-				}
-				processor.addEventType(type);
-			}
-			JSONArray epls = nodeJson.getJSONArray("epl");
-			for(int j=0;j<epls.length();j++){
-				processor.addEpl(epls.getString(j));
-			}
-			processor.setOutType(nodeJson.getString("out_type"));
-			
-			vertex.setProcessor(processor);
-			
-		}
-		
-		return dag;
+		exec.execute(new YarnClientRunnable(json));
+		//new EsperYarnClient().runYarnClient(json);
 		
 	}
 	
 	private class YarnClientRunnable implements Runnable {
 		
-		private String nodeJson;
-		private String input;
-		private String output;
-		private String parents;
+		private String json;
 		private EsperYarnClient client;
 		
-		public YarnClientRunnable(String nodeJson, String input, String output, String parents) {
-			this.nodeJson = nodeJson;
-			this.input = input;
-			this.output = output;
-			this.parents = parents;
+		public YarnClientRunnable(String json) {
+			this.json = json;
 			
 			client = new EsperYarnClient();
 		}
@@ -188,7 +73,7 @@ public class DAGController {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			client.runYarnClient(nodeJson, input, output, parents);
+			client.runYarnClient(json);
 		}
 		
 	}
@@ -237,7 +122,7 @@ public class DAGController {
 					eventJson.append("\"bm10\":" + random.nextInt(2) + "");
 					eventJson.append("}");
 					
-					client.produce(i+"", eventJson.toString(), "topic-0");
+					client.produce(i+"", eventJson.toString(), "node0-topic");
 				}
 				br.close();
 			} catch (FileNotFoundException e) {
@@ -250,7 +135,7 @@ public class DAGController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
-				client.produce(null, "{\"event_type\":\"quit\",\"quit\":\"null\"}", "topic-0");
+				client.produce(null, "{\"event_type\":\"quit\",\"quit\":\"node0\"}", "node0-topic");
 				client.close();
 			}
 			

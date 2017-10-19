@@ -62,7 +62,6 @@ public class EsperYarnClient {
 	// Amt. of virtual cores to request for container in which app will be executed
 	private int containerVCores;
 	// No. of containers in which the app needs to be executed
-	private int containerNums;
 	private int containerPriority;
 	
 	// Start time for client
@@ -77,14 +76,7 @@ public class EsperYarnClient {
 	private String kafkaServer;
 
 	//event processing info
-	private String eventType;
-	private String epl;
-	private String outType;
-	private String groupId;
-	private String inputTopic;
-	private String outputTopic;
-	private String parents;
-	private String nodeName;
+	private String nodes;
 	
 	public EsperYarnClient() {
 		conf = new YarnConfiguration();
@@ -104,7 +96,6 @@ public class EsperYarnClient {
 		
 		containerMemory = 16;
 		containerVCores = 1;
-		containerNums = 0;
 		containerPriority = 0;
 		
 		clientStartTime = System.currentTimeMillis();
@@ -115,40 +106,17 @@ public class EsperYarnClient {
 		
 		kafkaServer = "";
 
-		eventType = "";
-		epl = "";
-		outType = "";
-		groupId = "";
-		inputTopic = "";
-		outputTopic = "";
-		parents = "";
-		nodeName = "";
+		nodes = "";
 		
 	}
 	
-	private boolean init(String json, String input, String output, String parentNodes) throws JSONException {
+	private boolean init(String json) throws JSONException {
 		
 		kafkaServer = "10.109.253.127:9092";
 		
 		JSONObject node = new JSONObject(json);
 		
-		eventType = node.getJSONArray("event_types").toString();
-		eventType = "'" + eventType.replaceAll("\"", "%") + "'";
-		epl = node.getJSONArray("epl").toString();
-		epl = "'" + epl.replaceAll("\"", "%").replaceAll("'", "$") + "'";
-		
-		outType = node.getString("out_type");
-		
-		groupId = node.getString("name") + "_group_id";
-		
-		inputTopic = input;
-		outputTopic = output;
-		
-		parents = parentNodes;
-		if(parents.equals("[]"))parents = "[\"null\"]";
-		parents = "'" + parents.replaceAll("\"", "%") + "'";
-		
-		nodeName = node.getString("name");
+		nodes = "\'" + json.replace("\"", "%").replace("\'", "$") + "\'";
 		
 		appName = "esperApp";
 		amPriority = 0;
@@ -163,7 +131,6 @@ public class EsperYarnClient {
 		
 		containerMemory = 128;
 		containerVCores = 1;
-		containerNums = node.getInt("num");
 		containerPriority = 0;
 		
 		esperEngineJarPath = "/usr/esper/apps/esper-kafka-engine.jar";
@@ -284,19 +251,11 @@ public class EsperYarnClient {
 		// Set params for Application Master
 		commands.add("--container_memory " + String.valueOf(containerMemory));
 		commands.add("--container_vcores " + String.valueOf(containerVCores));
-		commands.add("--total_containers " + String.valueOf(containerNums));
 		commands.add("--request_priority " + String.valueOf(containerPriority));
 		commands.add("--esper_jar_path " + esperEngineJarPath);
 		commands.add("--esper_main_class " + esperEngineMainClass);
 		commands.add("--kafka_server " + kafkaServer);
-		commands.add("--event_type " + eventType);
-		commands.add("--epl " + epl);
-		commands.add("--out_type " + outType);
-		commands.add("--group_id " + groupId);
-		commands.add("--input_topic " + inputTopic);
-		commands.add("--output_topic " + outputTopic);
-		commands.add("--parents " + parents);
-		commands.add("--node_name " + nodeName);
+		commands.add("--nodes " + nodes);
 		
 		LOG.info("Completed setting up app master command " + commands.toString());
 		
@@ -394,13 +353,13 @@ public class EsperYarnClient {
 		yarnClient.killApplication(appId);
 	}
 	
-	public void runYarnClient(String json, String input, String output, String parentNodes) {
+	public void runYarnClient(String json) {
 		boolean result = false;
 		
 		try {
 			LOG.info("Initializing Client");
 			try {
-				boolean doRun = init(json, input, output, parentNodes);
+				boolean doRun = init(json);
 				if(!doRun){
 					System.exit(0);
 				}
