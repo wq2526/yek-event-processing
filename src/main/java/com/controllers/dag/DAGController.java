@@ -92,8 +92,8 @@ public class DAGController {
 			Random random = new Random();
 			
 			try {
-				BufferedReader br = new BufferedReader(new FileReader("src/test/java/allData.txt"));
-				for(int i=0;i<10;i++){
+				BufferedReader br = new BufferedReader(new FileReader("src/test/java/disk1.txt"));
+				while(br.readLine()!=null){
 					String s = br.readLine();
 					String[] str = s.split("\t");
 					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS+00:00");
@@ -114,6 +114,12 @@ public class DAGController {
 					eventJson.append("\"pc25\":\"" + str[8] + "\",");
 					eventJson.append("\"pc26\":\"" + str[9] + "\",");
 					eventJson.append("\"pc27\":\"" + str[10] + "\",");
+					/*eventJson.append("\"bm05\":" + str[11] + ",");
+					eventJson.append("\"bm06\":" + str[12] + ",");
+					eventJson.append("\"bm07\":" + str[13] + ",");
+					eventJson.append("\"bm08\":" + str[14] + ",");
+					eventJson.append("\"bm09\":" + str[15] + ",");
+					eventJson.append("\"bm10\":" + str[16] + "");*/
 					eventJson.append("\"bm05\":" + random.nextInt(2) + ",");
 					eventJson.append("\"bm06\":" + random.nextInt(2) + ",");
 					eventJson.append("\"bm07\":" + random.nextInt(2) + ",");
@@ -122,7 +128,7 @@ public class DAGController {
 					eventJson.append("\"bm10\":" + random.nextInt(2) + "");
 					eventJson.append("}");
 					
-					client.produce(i+"", eventJson.toString(), "node0-topic");
+					client.produce(null, eventJson.toString(), "node0-topic");
 				}
 				br.close();
 			} catch (FileNotFoundException e) {

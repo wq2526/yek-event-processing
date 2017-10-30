@@ -99,7 +99,7 @@ public class EsperYarnClient {
 		containerPriority = 0;
 		
 		clientStartTime = System.currentTimeMillis();
-		clientTimeOut = 60000;
+		clientTimeOut = 1200000;
 		
 		esperEngineJarPath = "";
 		esperEngineMainClass = "";
@@ -112,13 +112,13 @@ public class EsperYarnClient {
 	
 	private boolean init(String json) throws JSONException {
 		
-		kafkaServer = "10.109.253.127:9092";
+		kafkaServer = "\'10.109.253.127:9092\'";
 		
 		JSONObject node = new JSONObject(json);
 		
 		nodes = "\'" + json.replace("\"", "%").replace("\'", "$") + "\'";
 		
-		appName = "esperApp";
+		appName = "CEPAPP";
 		amPriority = 0;
 		amQueue = "default";
 		amMemory = 128;

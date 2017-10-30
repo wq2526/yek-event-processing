@@ -15,15 +15,15 @@ select avgValue,city from air_quality order by avgValue
 select ts,index,bm05,bm06,bm07,bm08,bm09,bm10 from CDataPoint
 String epl1 = "select ts,index,bm05,sum(bm05) as sumbm05 from CDataPoint#length(2) having sum(bm05)=1";
 String epl2 = "select ts,index,bm08,sum(bm08) as sumbm08 from CDataPoint#length(2) having sum(bm08)=1";
-String epl3 = "select (C05DataPoint.ts-C08DataPoint.ts) as ts58 from C05DataPoint#lastevent,C08DataPoint#lastevent";
-String epl4 = "insert into Alarm58DataPoint (alarm,ts58) select 1,ts58 from C58DataPoint where ts58>1.01*(select ts58 from C58DataPoint#length(2)).firstOf()";
+String epl3 = "select C05DataPoint.ts as ts05,C08DataPoint.ts as ts08,(C05DataPoint.ts-C08DataPoint.ts) as ts58 from C05DataPoint#lastevent,C08DataPoint#lastevent";
+String epl4 = "insert into Alarm58DataPoint (alarm,ts05,ts08,ts58) select 1,ts05,ts08,ts58 from C58DataPoint where ts58>1.01*(select ts58 from C58DataPoint#length(2)).firstOf()";
 
 String epl5 = "select ts,index,bm06,sum(bm06) as sumbm06 from CDataPoint#length(2) having sum(bm06)=1";
 String epl6 = "select ts,index,bm09,sum(bm09) as sumbm09 from CDataPoint#length(2) having sum(bm09)=1";
-String epl7 = "select (C06DataPoint.ts-C09DataPoint.ts) as ts69 from C06DataPoint#lastevent,C09DataPoint#lastevent";
-String epl8 = "insert into Alarm69DataPoint (alarm,ts69) select 1,ts69 from C69DataPoint where ts69>1.01*(select ts69 from C69DataPoint#length(2)).firstOf()";
+String epl7 = "select C06DataPoint.ts as ts06,C09DataPoint.ts as ts09,(C06DataPoint.ts-C09DataPoint.ts) as ts69 from C06DataPoint#lastevent,C09DataPoint#lastevent";
+String epl8 = "insert into Alarm69DataPoint (alarm,ts06,ts09,ts69) select 1,ts06,ts09,ts69 from C69DataPoint where ts69>1.01*(select ts69 from C69DataPoint#length(2)).firstOf()";
 
 String epl9 = "select ts,index,bm07,sum(bm07) as sumbm07 from CDataPoint#length(2) having sum(bm07)=1";
 String epl10 = "select ts,index,bm10,sum(bm10) as sumbm10 from CDataPoint#length(2) having sum(bm10)=1";
-String epl11 = "select (C07DataPoint.ts-C10DataPoint.ts) as ts710 from C07DataPoint#lastevent,C10DataPoint#lastevent";
-String epl12 = "insert into Alarm710DataPoint (alarm,ts710) select 1,ts710 from C710DataPoint where ts710>1.01*(select ts710 from C710DataPoint#length(2)).firstOf()";
+String epl11 = "select C07DataPoint.ts as ts07,C10DataPoint.ts as ts10,(C07DataPoint.ts-C10DataPoint.ts) as ts710 from C07DataPoint#lastevent,C10DataPoint#lastevent";
+String epl12 = "insert into Alarm710DataPoint (alarm,ts07,ts10,ts710) select 1,ts07,ts10,ts710 from C710DataPoint where ts710>1.01*(select ts710 from C710DataPoint#length(2)).firstOf()";
