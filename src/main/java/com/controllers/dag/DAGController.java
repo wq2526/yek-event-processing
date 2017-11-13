@@ -7,36 +7,23 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.csvreader.CsvReader;
-import com.dag.api.DAG;
-import com.dag.api.Edge;
-import com.dag.api.Vertex;
-import com.kafka.produce.test.JsonFileReader;
-import com.kafka.produce.test.KafkaClient;
-import com.runtime.api.Input;
-import com.runtime.api.Processor;
-import com.runtime.api.impl.EsperKafkaInput;
-import com.runtime.api.impl.EsperKafkaOutput;
-import com.runtime.api.impl.EsperKafkaProcessor;
-import com.runtime.api.impl.EventType;
+import com.kafka.client.KafkaProducerClient;
 import com.yarn.esper.client.EsperYarnClient;
 
 @RestController
@@ -47,7 +34,7 @@ public class DAGController {
 	private ExecutorService exec;
 	
 	@RequestMapping("/dag")
-	public void startYarnClient(@RequestParam(value="data") String json) throws JSONException {
+	public void startYarnClient(@RequestParam(value="data") String json) {
 		
 		exec = Executors.newCachedThreadPool();
 		exec.execute(new KafkaRunnable());
@@ -55,7 +42,6 @@ public class DAGController {
 		LOG.info("send json to yarn client: " + json);	
 			
 		exec.execute(new YarnClientRunnable(json));
-		//new EsperYarnClient().runYarnClient(json);
 		
 	}
 	
@@ -80,10 +66,11 @@ public class DAGController {
 	
 	private class KafkaRunnable implements Runnable {
 		
-		private KafkaClient<String, String> client;
+		private KafkaProducerClient<String, String> producer;
 		
 		public KafkaRunnable() {
-			client = new KafkaClient<String, String>();
+			producer = new KafkaProducerClient<String, String>("10.109.253.127:9092");
+			producer.addTopic("node0-topic");
 		}
 
 		@Override
@@ -92,8 +79,9 @@ public class DAGController {
 			Random random = new Random();
 			
 			try {
-				BufferedReader br = new BufferedReader(new FileReader("src/test/java/disk1.txt"));
-				while(br.readLine()!=null){
+				BufferedReader br = new BufferedReader(new FileReader("src/test/java/allData.txt"));
+				for(int i=0;i<10;i++){
+				//while(br.readLine()!=null){
 					String s = br.readLine();
 					String[] str = s.split("\t");
 					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS+00:00");
@@ -114,12 +102,6 @@ public class DAGController {
 					eventJson.append("\"pc25\":\"" + str[8] + "\",");
 					eventJson.append("\"pc26\":\"" + str[9] + "\",");
 					eventJson.append("\"pc27\":\"" + str[10] + "\",");
-					/*eventJson.append("\"bm05\":" + str[11] + ",");
-					eventJson.append("\"bm06\":" + str[12] + ",");
-					eventJson.append("\"bm07\":" + str[13] + ",");
-					eventJson.append("\"bm08\":" + str[14] + ",");
-					eventJson.append("\"bm09\":" + str[15] + ",");
-					eventJson.append("\"bm10\":" + str[16] + "");*/
 					eventJson.append("\"bm05\":" + random.nextInt(2) + ",");
 					eventJson.append("\"bm06\":" + random.nextInt(2) + ",");
 					eventJson.append("\"bm07\":" + random.nextInt(2) + ",");
@@ -128,7 +110,7 @@ public class DAGController {
 					eventJson.append("\"bm10\":" + random.nextInt(2) + "");
 					eventJson.append("}");
 					
-					client.produce(null, eventJson.toString(), "node0-topic");
+					producer.produce(null, eventJson.toString());
 				}
 				br.close();
 			} catch (FileNotFoundException e) {
@@ -141,8 +123,8 @@ public class DAGController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
-				client.produce(null, "{\"event_type\":\"quit\",\"quit\":\"node0\"}", "node0-topic");
-				client.close();
+				producer.produce(null, "{\"event_type\":\"quit\",\"quit\":\"node0\"}");
+				producer.close();
 			}
 			
 			//test();
@@ -150,14 +132,14 @@ public class DAGController {
 		}
 		
 		private void test() {
-			/*client.produce(null, 
-					"{\"event_type\":\"person_event\", \"age\":100, \"name\":\"testname1\"}", 
-					"topic_0");
-			client.produce(null, 
-					"{\"event_type\":\"person_event\", \"age\":200, \"name\":\"testname2\"}", 
-					"topic_0");*/
-			client.produce(null, "{\"event_type\":\"quit\",\"quit\":\"quit\"}", "topic-0");
-			client.close();
+			producer.produce(null, 
+					"{\"event_type\":\"person_event\", \"age\":100, \"name\":\"testname3\"}" 
+					);
+			producer.produce(null, 
+					"{\"event_type\":\"person_event\", \"age\":200, \"name\":\"testname4\"}" 
+					);
+			producer.produce(null, "{\"event_type\":\"quit\",\"quit\":\"node0\"}");
+			producer.close();
 		}
 		
 	}

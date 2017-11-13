@@ -1,10 +1,11 @@
 {"event_type":"person_event", "age":100, "name":"testname1"}
 {"event_type":"person_event", "age":200, "name":"testname2"}
 {"event_type":"person_event2", "age":200, "gender":"female"}
-{"event_type":"quit", "quit":"quit"}
+{"event_type":"quit", "quit":"node0"}
 
 select * from person_event (age>=100)
 select avg(age) from person_event
+select sum(age) from person_event
 
 air_quality
 select * from air_quality (parameter='pm25')

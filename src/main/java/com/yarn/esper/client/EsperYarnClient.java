@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,8 +30,6 @@ import org.apache.hadoop.yarn.client.api.YarnClient;
 import org.apache.hadoop.yarn.client.api.YarnClientApplication;
 import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.apache.hadoop.yarn.exceptions.YarnException;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class EsperYarnClient {
 	
@@ -99,7 +96,7 @@ public class EsperYarnClient {
 		containerPriority = 0;
 		
 		clientStartTime = System.currentTimeMillis();
-		clientTimeOut = 1200000;
+		clientTimeOut = 120000;
 		
 		esperEngineJarPath = "";
 		esperEngineMainClass = "";
@@ -110,11 +107,9 @@ public class EsperYarnClient {
 		
 	}
 	
-	private boolean init(String json) throws JSONException {
+	private boolean init(String json) {
 		
 		kafkaServer = "\'10.109.253.127:9092\'";
-		
-		JSONObject node = new JSONObject(json);
 		
 		nodes = "\'" + json.replace("\"", "%").replace("\'", "$") + "\'";
 		
