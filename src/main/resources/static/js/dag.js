@@ -11,12 +11,46 @@ $(function () {
     var index = 0;
     var currentNode;
     
-    var eventArray = new Array();
-    var eventNum = 0;
-    var eventProcessor = 0;
-
-    $("#node_list").hide();
-    $("#node_configuration").hide();
+    graph.onclick = function(evt) {
+    	currentNode = graph.hitTest(evt);
+    	$("#node_name_input").val(currentNode.name);
+    	var eventNum = currentNode.eventTypes.length;
+    	var processorNum = currentNode.processors.length;
+    	for(var i=0;i<eventNum;i++){
+    		var eventid = "event_type_input_" + (i+1);
+    		var propNum = currentNode.eventTypes[i].props.length;
+    		$("#add_event_type").before(
+    	            "<div class='form-group event-type'>"+
+    	                "<label>Event Type</label>"+
+    	                "<input type='text' class='form-control' id="+eventid+" placeholder='Event Type'>"+
+    	                "<div id='event_props'>"+
+    	        				"<div class='form-group' id='event_prop'>"+
+    	        				"<label>Event Property</label>"+
+    	        				"<div class='add-event-prop' id="+(i+1)+"><a href='#'><i class='icon-plus-sign'></i></a></div>"+
+    	        			"</div>"+
+    	            "</div>");
+    		for(var j=0;j<propNum;j++){
+    			var propid = (i+1) + "prop_name_input_" + (j+1);
+    			var classid = (i+1) + "prop_class_input_" + (j+1);
+    			$(".add-event-prop#"(i+1)).before(
+    	                "<div class='prop-inline'>"+
+    	                    "<label>Property Name</label>"+
+    	                    "<input type='text' class='form-control' id="+propid+" placeholder='Property Name'>"+
+    	                    "<label>Property Type</label>"+
+    	                    "<select class='form-control' id="+classid+">"+
+    	                        "<option></option>"+
+    	                        "<option>String</option>"+
+    	                        "<option>int</option>"+
+    	                        "<option>boolean</option>"+
+    	                        "<option>float</option>"+
+    	                        "<option>double</option>"+
+    	                    "</select>"+
+    	                "</div>");
+    		}
+    	}
+    	$("#out_type").val(currentNode.outEventType);
+    	$("#node_num").val(currentNode.num);
+    }
 
     $(".btn-group").children(".btn").click(function () {
         $(this).addClass("active");
@@ -36,6 +70,8 @@ $(function () {
          index++;
          node.name = "node" + index;
          node.image = "node.svg";
+         node.eventTypes = new Array();
+         node.processors = new Array();
          model.add(node);
     });
 
@@ -48,24 +84,13 @@ $(function () {
     });
 
     $("#default").click(function () {
-        graph.interactionMode = Q.Consts.INTERACTION_MODE_DEFAULT;
-    });
-
-    $("#nodeList").click(function () {
-        showList();
-    });
-
-    $("#return").click(function () {
-        $("#node_list").hide();
-        $("#node_configuration").hide();
-        $("#graph_panel").show();
+    	graph.interactionMode = Q.Consts.INTERACTION_MODE_DEFAULT;
     });
 
     $("#add_event_type").click(function () {
-    		event = new Object();
-        event.id = eventNum;
-        event.prop = 0;
-        eventArray[eventNum] = event;
+    	var	event = new Object();
+        event.props = new Array();
+        var eventNum = currentNode.eventTypes.push(event);
         var eventid = "event_type_input_" + eventNum;
         $(this).before(
             "<div class='form-group event-type'>"+
@@ -77,11 +102,11 @@ $(function () {
         				"<div class='add-event-prop' id="+eventNum+"><a href='#'><i class='icon-plus-sign'></i></a></div>"+
         			"</div>"+
             "</div>");
-        eventNum++;
+
         $(".add-event-prop").click(function () {
-        		var eventId = $(this).attr("id");
-        		var currentEvent = eventArray[eventId];
-        		var propNum = currentEvent.prop++;
+        	var eventId = $(this).attr("id");
+        	var prop = new Object();
+        	var propNum = currentNode.eventTypes[eventId-1].props.push(prop);
             var propid = eventId + "prop_name_input_" + propNum;
             var classid = eventId + "prop_class_input_" + propNum;
             $(this).before(
@@ -102,7 +127,8 @@ $(function () {
     });
     
     $("#add_event_processor").click(function () {
-        var processorid = "event_process_input_" + eventProcessor++;
+    	var processorNum = currentNode.processors.push("");
+        var processorid = "event_process_input_" + processorNum;
         $(this).before(
             "<div class='form-group event-processor'>"+
                 "<label>Event Processor</label>"+
@@ -114,31 +140,21 @@ $(function () {
         currentNode.name = $("#node_name_input").val();
         currentNode.outEventType = $("#out_type").val();
         currentNode.num = $("#node_num").val();
-        currentNode.processor = "[";
-        currentNode.eventType = "[";
-        for(var i=0;i<eventProcessor;i++){
-            currentNode.processor = currentNode.processor + "\"" + $("#event_process_input_"+i).val() + "\",";
+        var eventNum = currentNode.eventTypes.length;
+        var processorNum = currentNode.processor
+        for(var i=0;i<processorNum;i++){
+            currentNode.processors[i] = $("#event_process_input_"+(i+1)).val();
         }
-        currentNode.processor = currentNode.processor + "]";
         
-        for(var i=0;i<eventArray.length;i++){
-        		currentNode.eventType = currentNode.eventType + "{" +
-        		"\"event_type\":\"" + $("#event_type_input_"+i).val() + "\",";
-        		var eventProps = "[";
-        		var eventClasses = "[";
-        		for(var j=0;j<eventArray[i].prop;j++){
-        			eventProps = eventProps + "\"" + $("#"+i+"prop_name_input_"+j).val() + "\",";
-        			eventClasses = eventClasses + "\"" + $("#"+i+"prop_class_input_"+j).val() + "\",";
+        for(var i=0;i<eventNum;i++){
+        		currentNode.eventTypes[i].name = $("#event_type_input_"+i).val();
+        		var propNum = currentNode.eventTypes[i].props.length;
+        		for(var j=0;j<propNum;j++){
+        			currentNode.eventTypes[i].props[j].name = $("#"+(i+1)+"prop_name_input_"+(j+1)).val();
+        			currentNode.eventTypes[i].props[j].className = $("#"+(i+1)+"prop_class_input_"+(j+1)).val();
         		}
-        		eventProps = eventProps + "]";
-        		eventClasses = eventClasses + "]";
-        		currentNode.eventType = currentNode.eventType + 
-        		"\"event_props\":" + eventProps + "," + 
-        		"\"event_classes\":" + eventClasses + "},";
-        }
-        currentNode.eventType = currentNode.eventType + "]";
+        }      
         
-        showList();
     });
 
     $("#submit").click(function () {
@@ -181,37 +197,5 @@ $(function () {
 		});
 
     });
-
-    function showList() {
-        $("#graph_panel").hide();
-        $("#node_configuration").hide();
-        $("#node_table").empty();
-        $("#node_table").append("<tr><th>Name</th><th>Event Type</th><th>Event Processor</th><th>Output Event Type</th><th>Operations</th></tr>");
-        model.forEachByTopoBreadthFirstSearch(function(node){
-            $("#node_table").append(
-                "<tr>"+
-                "<td>"+node.name+"</td>"+
-                "<td>"+node.eventType+"</td>"+
-                "<td>"+node.processor+"</td>"+
-                "<td>"+node.outEventType+"</td>"+
-                "<td id='"+node.id+"'><a href='#'>edit</a></td>"+
-                "</tr>");
-        });
-        $("td:contains('edit')").click(function () {
-            var nodeid = $(this).attr("id");
-            currentNode = model.getById(nodeid);
-            eventNum = 0;
-            eventProcessor = 0;
-            eventArray = new Array();
-            $("#node_name_input").val(currentNode.name);
-            $("#node_num").val("");
-            $("#out_type").val("");
-            $(".event-processor").remove();
-            $(".event-type").remove();
-            $("#node_list").hide();
-            $("#node_configuration").show();
-        });
-        $("#node_list").show();
-    }
 
 });

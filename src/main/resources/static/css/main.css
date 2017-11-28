@@ -59,9 +59,15 @@ header.navbar {
     font-size: 1.1em;
 }
 
-#right_panel, #node_list {
+#mid_panel {
     padding-left: 5px;
-    width: 76%;
+    width: 52%;
+    float: left;
+}
+
+#right_panel {
+    padding-left: 5px;
+    width: 24%;
     float: left;
 }
 .breadcrumb > .active {
@@ -78,17 +84,9 @@ header.navbar {
     height: 650px;
 }
 
-#return {
-    padding: 0px;
-    float:left;
-}
-
 #canvas {
     outline: none;
     height: 100%;
-}
-#submit {
-    float:right;
 }
 
 .prop-inline {
