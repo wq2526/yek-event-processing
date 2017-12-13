@@ -69,11 +69,11 @@ $(function () {
         var eventid = "event_type_input_" + eventNum;
         $(this).before(
             "<div class='form-group event-type'>"+
-                "<label>Event Type</label>"+
+                "<label>事件名称</label>"+
                 "<input type='text' class='form-control' id="+eventid+" placeholder='Event Type'>"+
                 "<div id='event_props'>"+
         				"<div class='form-group' id='event_prop'>"+
-        				"<label>Event Property</label>"+
+        				"<label>事件属性</label>"+
         				"<div class='add-event-prop' id="+eventNum+"><a href='#'><i class='icon-plus-sign'></i></a></div>"+
         			"</div>"+
             "</div>");
@@ -86,9 +86,9 @@ $(function () {
             var classid = eventId + "prop_class_input_" + propNum;
             $(this).before(
                 "<div class='prop-inline'>"+
-                    "<label>Property Name</label>"+
+                    "<label>属性名称</label>"+
                     "<input type='text' class='form-control' id="+propid+" placeholder='Property Name'>"+
-                    "<label>Property Type</label>"+
+                    "<label>数据类型</label>"+
                     "<select class='form-control' id="+classid+">"+
                         "<option></option>"+
                         "<option>String</option>"+
@@ -105,7 +105,7 @@ $(function () {
         var processorid = "event_process_input_" + eventProcessor++;
         $(this).before(
             "<div class='form-group event-processor'>"+
-                "<label>Event Processor</label>"+
+                "<label>操作</label>"+
                 "<input type='text' class='form-control' id="+processorid+" placeholder='Event Processor'>"+
             "</div>");
     });
@@ -155,7 +155,7 @@ $(function () {
             		"\"name\":" + "\"" + node.name + "\"," +
             		"\"event_types\":" + node.eventType + "," +
             		"\"epl\":" + node.processor + "," +
-            		"\"out_type\":" + node.outEventType + "," +
+            		"\"out_type\":" + "\"" + node.outEventType + "\"," +
             		"\"num\":" + node.num + "," +
             		"\"children\":[" + children + "]" +
             		"},"

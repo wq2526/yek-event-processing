@@ -25,7 +25,7 @@
 
 <header id="header" class="navbar navbar-fixed-top">
     <div class="page-header">
-        <h1>Dashbord <small>complex event processing</small></h1>
+        <h1>分布式复杂事件处理系统 <small></small></h1>
     </div>
 </header>
 
@@ -33,9 +33,9 @@
     <div id="left_panel">
         <div class="navbar" id="node_navbar">
             <table class="table table-hover">
-                <tr><th id="nodes"><a href="#">nodes</a></th></tr>
-                <tr><td id="nodeList"><i class="icon-list"></i> <a href="#">node list</a></td></tr>
-                <tr><td id="addDag"><i class="icon-plus"></i> <a href="#">new</a></td></tr>
+                <tr><th id="nodes"><a href="#">选项</a></th></tr>
+                <tr><td id="nodeList"><i class="icon-list"></i> <a href="#">顶点配置</a></td></tr>
+                <tr><td id="addDag"><i class="icon-plus"></i> <a href="#">新建</a></td></tr>
             </table>
         </div>
     </div>
@@ -74,25 +74,25 @@
         <div id="node_list">
             <table class="table table-bordered" id="node_table"></table>
             <div id="return"><a href="#"><i class="icon-reply"></i></a></div>
-            <div class="btn btn-default" title="remove" id="submit">Submit</div>
+            <div class="btn btn-default" title="remove" id="submit">提交</div>
         </div>
         <div id="node_configuration">
             <form>
                 <div class="form-group">
-                    <label>Node Name</label>
+                    <label>顶点名称</label>
                     <input type="text" class="form-control" id="node_name_input" placeholder="Node Name">
                 </div>
-                <div id="add_event_type"><a href="#"><i class="icon-plus-sign"></i>add event type</a></div>  
-                <div id="add_event_processor"><a href="#"><i class="icon-plus-sign"></i>add event processor</a></div>
+                <div id="add_event_type"><a href="#"><i class="icon-plus-sign"></i>添加输入事件</a></div>  
+                <div id="add_event_processor"><a href="#"><i class="icon-plus-sign"></i>添加操作</a></div>
                 <div class="form-group">
-                    <label>Output Event Type</label>
+                    <label>输出事件</label>
                     <input type="text" class="form-control" id="out_type" placeholder="Output Event Type">
                 </div>
                 <div class="form-group">
-                    <label>Node Num</label>
+                    <label>顶点并行度</label>
                     <input type="text" class="form-control" id="node_num" placeholder="Node Num">
                 </div>
-                <button type="button" class="btn btn-default" id="save">Save</button>
+                <button type="button" class="btn btn-default" id="save">保存</button>
             </form>
         </div>
     </div>
