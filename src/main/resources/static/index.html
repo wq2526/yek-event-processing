@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <title>index</title>
     <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css"/>
-    <link rel="stylesheet" href="lib/bootstrap/font-awesome.min.css"/>
+    <link rel="stylesheet" href="lib/font-awesome/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="lib/codemirror/codemirror.css"/>
 
     <link rel="stylesheet" href="css/main.css"/>
@@ -33,14 +33,15 @@
     <div id="left_panel">
         <div class="navbar" id="node_navbar">
             <table class="table table-hover">
-                <tr><th id="nodes"><a href="#">nodes</a></th></tr>
-                <tr><td id="addDag"><i class="icon-plus"></i> <a href="#">new</a></td></tr>
+                <tr><th id="choice"><a href="#">选项</a></th></tr>
+                <tr><td id="vertexConfig"><i class="fa fa-cog"></i> <a href="#">顶点配置</a></td></tr>
+                <tr><td id="inputData"><i class="fa fa-database"></i> <a href="#">输入数据源</a></td></tr>
             </table>
         </div>
     </div>
     <div id="mid_panel">
     	<div>
-            <ol id="dag_title" class="breadcrumb" style="float: left">
+            <ol id="mid_title" class="breadcrumb" style="float: left">
                 <li class="active">DAG</li>
             </ol>
             <div style="clear:both;"></div>
@@ -65,36 +66,47 @@
                         </div>
                     </div>
                 </div>
+                <div class="btn btn-default btn-sm" title="config" id="config">配置</div>
+                <div class="btn btn-default btn-sm" title="submit" id="submit">提交</div>
             </div>
             <div class="q-content">
                 <div id="canvas"></div>
             </div>
         </div>
+        <div id="input_configuration">
+        	<form>
+        		<div class="form-group">
+                    <label>Kafka服务器地址</label>
+                    <input type="text" class="form-control" id="kafka_server" placeholder="Kafka Server">
+                </div>
+        		<div class="form-group">
+                    <label>主题列表（以逗号分隔）</label>
+                    <input type="text" class="form-control" id="topic_list" placeholder="topic1,topic2,...">
+                </div>
+        		<button type="button" class="btn btn-default" id="kafka_save">保存</button>
+        	</form>
+        </div>
     </div>
     <div id="right_panel">
     	<div>
             <ol id="config_title" class="breadcrumb" style="float: left">
-                <li class="active">Configuration</li>
+                <li class="active">顶点配置</li>
             </ol>
             <div style="clear:both;"></div>
         </div>
         <div id="node_configuration">
             <form>
                 <div class="form-group">
-                    <label>Node Name</label>
+                    <label>顶点名称</label>
                     <input type="text" class="form-control" id="node_name_input" placeholder="Node Name">
                 </div>
-                <div id="add_event_type"><a href="#"><i class="icon-plus-sign"></i>add event type</a></div>  
-                <div id="add_event_processor"><a href="#"><i class="icon-plus-sign"></i>add event processor</a></div>
+                <div id="add_event_type"><a href="#"><i class="fa fa-plus-circle"></i>添加输入事件</a></div>  
+                <div id="add_event_processor"><a href="#"><i class="fa fa-plus-circle"></i>添加操作</a></div>
                 <div class="form-group">
-                    <label>Output Event Type</label>
+                    <label>输出事件</label>
                     <input type="text" class="form-control" id="out_type" placeholder="Output Event Type">
                 </div>
-                <div class="form-group">
-                    <label>Node Num</label>
-                    <input type="text" class="form-control" id="node_num" placeholder="Node Num">
-                </div>
-                <button type="button" class="btn btn-default" id="save">Save</button>
+                <button type="button" class="btn btn-default" id="save">保存</button>
             </form>
         </div>
     </div>

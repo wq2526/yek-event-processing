@@ -45,7 +45,7 @@ header.navbar {
 }
 #left_panel {
     padding-right: 5px;
-    width: 24%;
+    width: 15%;
     float: left;
 }
 #node_navbar {
@@ -61,13 +61,12 @@ header.navbar {
 
 #mid_panel {
     padding-left: 5px;
-    width: 52%;
     float: left;
 }
 
 #right_panel {
     padding-left: 5px;
-    width: 24%;
+    width: 35%;
     float: left;
 }
 .breadcrumb > .active {
