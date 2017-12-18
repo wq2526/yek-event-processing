@@ -251,7 +251,8 @@ $(function () {
             		"\"children\":[" + children + "]" +
             		"},"
         });
-    	data = data + "],\"kafka_info\":{\"kafka_server\":\"" + kafkaInfo.server + "\",\"kafka_topics\":\"" + kafkaInfo.topics + "\"}}";
+    	data = data + "],\"kafka_server\":\"" + 
+    	kafkaInfo.server + "\",\"kafka_topics\":\"" + kafkaInfo.topics + "\"}";
     	
     	$.ajax({
 			type : "POST",
