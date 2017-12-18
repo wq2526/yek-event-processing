@@ -109,7 +109,7 @@ public class EsperYarnClient {
 	
 	private boolean init(String json) {
 		
-		kafkaServer = "\'10.109.253.127:9092\'";
+		kafkaServer = "\'10.109.253.145:9092\'";
 		
 		nodes = "\'" + json.replace("\"", "%").replace("\'", "$") + "\'";
 		
@@ -229,6 +229,8 @@ public class EsperYarnClient {
 			amClasspath.append(ApplicationConstants.CLASS_PATH_SEPARATOR);
 			amClasspath.append(c.trim());
 		}
+		amClasspath.append(ApplicationConstants.CLASS_PATH_SEPARATOR);
+		amClasspath.append(AppMasterConfig.DEFAULT_APPMASTER_CLASSPARH);
 		amClasspath.append(ApplicationConstants.CLASS_PATH_SEPARATOR);
 		amClasspath.append(appMasterJarPath);
 		amEnv.put("CLASSPATH", amClasspath.toString());
