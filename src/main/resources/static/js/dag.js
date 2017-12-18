@@ -10,14 +10,95 @@ $(function () {
     var model = graph.graphModel;
     var index = 0;
     var currentNode;
+    var kafkaInfo = new Object();
     
-    var eventArray = new Array();
-    var eventNum = 0;
-    var eventProcessor = 0;
-
-    $("#node_list").hide();
-    $("#node_configuration").hide();
-
+    $("#right_panel").hide();
+    $("#mid_panel").width("80%");
+    $("#input_configuration").hide();
+    
+    $("#vertexConfig").click(function(){
+    	$("#graph_panel").show();
+    	$("#input_configuration").hide();
+    	$("#mid_title").children("li").html("DAG");
+    });
+    
+    $("#inputData").click(function(){
+    	$("#input_configuration").show();
+    	$("#graph_panel").hide();	
+    	$("#mid_title").children("li").html("Kafka");
+    });
+    
+    var styles = {};
+    styles[Q.Styles.SELECTION_COLOR] = 'red';
+    graph.styles = styles;
+    
+    graph.onElementCreated = function (element, evt, dragInfo) {
+        Q.Graph.prototype.onElementCreated.call(this, element, evt, dragInfo);
+        if (element instanceof Q.Edge) {
+        	element.name = "";
+            return;
+        }
+    }
+    
+    graph.onclick = function(evt) {
+    	currentNode = graph.getElementByMouseEvent(evt);
+    	$("#config").click(function(){
+    		$("#mid_panel").width("45%");
+        	$("#right_panel").show();	
+            $(".event-type").remove();
+            $(".event-processor").remove();
+        	$("#node_name_input").val(currentNode.name);
+        	for(var i=0;i<currentNode.eventTypes.length;i++){
+        		var eventid = "event_type_input_" + i;
+        		$("#add_event_type").before(
+        	            "<div class='form-group event-type'>"+
+        	                "<label>事件名称</label>"+
+        	                "<input type='text' class='form-control' id="+eventid+" placeholder='Event Type'>"+
+        	                "<div id='event_props'>"+
+        	        				"<div class='form-group' id='event_prop'>"+
+        	        				"<label>事件属性</label>"+
+        	        				"<div class='add-event-prop' id="+i+"><a href='#'><i class='fa fa-plus-circle'></i></a></div>"+
+        	        			"</div>"+
+        	            "</div>");
+        		$("#"+eventid).val(currentNode.eventTypes[i].name);
+        		for(var j=0;j<currentNode.eventTypes[i].props.length;j++){
+        			var propid = i + "_prop_name_input_" + j;
+        			var classid = i + "_prop_class_input_" + j;
+        			$(".add-event-prop#"+i).before(
+        	                "<div class='prop-inline'>"+
+        	                    "<label>属性名称</label>"+
+        	                    "<input type='text' class='form-control' id="+propid+" placeholder='Property Name'>"+
+        	                    "<label>数据类型</label>"+
+        	                    "<select class='form-control' id="+classid+">"+
+        	                        "<option></option>"+
+        	                        "<option>String</option>"+
+        	                        "<option>int</option>"+
+        	                        "<option>boolean</option>"+
+        	                        "<option>float</option>"+
+        	                        "<option>double</option>"+
+        	                    "</select>"+
+        	                "</div>");
+        			$("#"+propid).val(currentNode.eventTypes[i].props[j].name);
+        			$("#"+classid).val(currentNode.eventTypes[i].props[j].className);
+        		}
+        	}
+        	for(var i=0;i<currentNode.processors.length;i++){
+                var processorid = "event_process_input_" + i;
+        		$("#add_event_processor").before(
+        				"<div class='form-group event-processor'>"+
+                        "<label>操作</label>"+
+                        "<input type='text' class='form-control' id="+processorid+" placeholder='Event Processor'>"+
+                    "</div>"		
+        		);
+        		$("#"+processorid).val(currentNode.processors[i]);
+        	}
+        	$("#out_type").val(currentNode.outEventType);
+        	
+        });	
+    }
+    
+    
+    
     $(".btn-group").children(".btn").click(function () {
         $(this).addClass("active");
         $(this).siblings().removeClass("active");
@@ -36,6 +117,9 @@ $(function () {
          index++;
          node.name = "node" + index;
          node.image = "node.svg";
+         node.eventTypes = new Array();
+         node.processors = new Array();
+         node.outEventType = "";
          model.add(node);
     });
 
@@ -48,25 +132,15 @@ $(function () {
     });
 
     $("#default").click(function () {
-        graph.interactionMode = Q.Consts.INTERACTION_MODE_DEFAULT;
+    	graph.interactionMode = Q.Consts.INTERACTION_MODE_DEFAULT;
     });
-
-    $("#nodeList").click(function () {
-        showList();
-    });
-
-    $("#return").click(function () {
-        $("#node_list").hide();
-        $("#node_configuration").hide();
-        $("#graph_panel").show();
-    });
-
-    $("#add_event_type").click(function () {
-    		event = new Object();
-        event.id = eventNum;
-        event.prop = 0;
-        eventArray[eventNum] = event;
+    
+	$("#add_event_type").click(function () {
+		var event = new Object();
+		event.props = new Array();
+		var eventNum = currentNode.eventTypes.length;
         var eventid = "event_type_input_" + eventNum;
+        currentNode.eventTypes.push(event);
         $(this).before(
             "<div class='form-group event-type'>"+
                 "<label>事件名称</label>"+
@@ -74,71 +148,67 @@ $(function () {
                 "<div id='event_props'>"+
         				"<div class='form-group' id='event_prop'>"+
         				"<label>事件属性</label>"+
-        				"<div class='add-event-prop' id="+eventNum+"><a href='#'><i class='icon-plus-sign'></i></a></div>"+
+        				"<div class='add-event-prop' id="+eventNum+"><a href='#'><i class='fa fa-plus-circle'></i></a></div>"+
         			"</div>"+
             "</div>");
-        eventNum++;
         $(".add-event-prop").click(function () {
-        		var eventId = $(this).attr("id");
-        		var currentEvent = eventArray[eventId];
-        		var propNum = currentEvent.prop++;
-            var propid = eventId + "prop_name_input_" + propNum;
-            var classid = eventId + "prop_class_input_" + propNum;
-            $(this).before(
-                "<div class='prop-inline'>"+
-                    "<label>属性名称</label>"+
-                    "<input type='text' class='form-control' id="+propid+" placeholder='Property Name'>"+
-                    "<label>数据类型</label>"+
-                    "<select class='form-control' id="+classid+">"+
-                        "<option></option>"+
-                        "<option>String</option>"+
-                        "<option>int</option>"+
-                        "<option>boolean</option>"+
-                        "<option>float</option>"+
-                        "<option>double</option>"+
-                    "</select>"+
-                "</div>");
-        });
+    		var eventId = $(this).attr("id");
+    		var prop = new Object();
+    		var propNum = currentNode.eventTypes[eventId].props.length;
+    		var propid = eventId + "_prop_name_input_" + propNum;
+    		var classid = eventId + "_prop_class_input_" + propNum;
+    		currentNode.eventTypes[eventId].props.push(prop);
+    		$(this).before(
+    			"<div class='prop-inline'>"+
+    				"<label>属性名称</label>"+
+    				"<input type='text' class='form-control' id="+propid+" placeholder='Property Name'>"+
+    				"<label>数据类型</label>"+
+    				"<select class='form-control' id="+classid+">"+
+    					"<option></option>"+
+    					"<option>String</option>"+
+    					"<option>int</option>"+
+    					"<option>boolean</option>"+
+                    	"<option>float</option>"+
+                    	"<option>double</option>"+
+                    	"</select>"+
+    			"</div>");
+    });
+        
     });
     
     $("#add_event_processor").click(function () {
-        var processorid = "event_process_input_" + eventProcessor++;
+        var processorid = "event_process_input_" + currentNode.processors.length;
+        currentNode.processors.push("");
         $(this).before(
             "<div class='form-group event-processor'>"+
                 "<label>操作</label>"+
                 "<input type='text' class='form-control' id="+processorid+" placeholder='Event Processor'>"+
             "</div>");
     });
-
+    
     $("#save").click(function () {
         currentNode.name = $("#node_name_input").val();
         currentNode.outEventType = $("#out_type").val();
-        currentNode.num = $("#node_num").val();
-        currentNode.processor = "[";
-        currentNode.eventType = "[";
-        for(var i=0;i<eventProcessor;i++){
-            currentNode.processor = currentNode.processor + "\"" + $("#event_process_input_"+i).val() + "\",";
+        for(var i=0;i<currentNode.processors.length;i++){
+            currentNode.processors[i] = $("#event_process_input_"+i).val();
         }
-        currentNode.processor = currentNode.processor + "]";
         
-        for(var i=0;i<eventArray.length;i++){
-        		currentNode.eventType = currentNode.eventType + "{" +
-        		"\"event_type\":\"" + $("#event_type_input_"+i).val() + "\",";
-        		var eventProps = "[";
-        		var eventClasses = "[";
-        		for(var j=0;j<eventArray[i].prop;j++){
-        			eventProps = eventProps + "\"" + $("#"+i+"prop_name_input_"+j).val() + "\",";
-        			eventClasses = eventClasses + "\"" + $("#"+i+"prop_class_input_"+j).val() + "\",";
-        		}
-        		eventProps = eventProps + "]";
-        		eventClasses = eventClasses + "]";
-        		currentNode.eventType = currentNode.eventType + 
-        		"\"event_props\":" + eventProps + "," + 
-        		"\"event_classes\":" + eventClasses + "},";
+        for(var i=0;i<currentNode.eventTypes.length;i++){ 
+        	currentNode.eventTypes[i].name = $("#event_type_input_"+i).val();
+    		for(var j=0;j<currentNode.eventTypes[i].props.length;j++){
+    			currentNode.eventTypes[i].props[j].name = $("#"+i+"_prop_name_input_"+j).val();
+    			currentNode.eventTypes[i].props[j].className = $("#"+i+"_prop_class_input_"+j).val();
+    		}
         }
-        currentNode.eventType = currentNode.eventType + "]";
         
-        showList();
+        $("#right_panel").hide();
+        $("#mid_panel").width("80%");
+        
+    });
+    
+    $("#kafka_save").click(function(){
+    	kafkaInfo.server = $("#kafka_server").val();
+    	kafkaInfo.topics = $("#topic_list").val();
     });
 
     $("#submit").click(function () {
@@ -150,17 +220,39 @@ $(function () {
     			children = children + edge.to + ","
     		});
     		
+    		var event_types = "[";
+    		var epls = "[";
+    		
+    		for(var i=0;i<node.eventTypes.length;i++){
+    			event_types = event_types + "{\"event_type\":\"" + node.eventTypes[i].name + "\",";
+    			var event_props = "\"event_props\":[";
+    			var event_classes = "\"event_classes\":["
+    			for(var j=0;j<node.eventTypes[i].props.length;j++){
+    				event_props = event_props + "\"" + node.eventTypes[i].props[j].name + "\",";
+    				event_classes = event_classes + "\"" + node.eventTypes[i].props[j].className + "\",";
+    			}
+    			event_props = event_props + "],";
+    			event_classes = event_classes + "]";
+    			event_types = event_types + event_props + event_classes + "},"
+    		}
+    		event_types = event_types + "]";
+    		
+    		for(var i=0;i<node.processors.length;i++){
+    			epls = epls + "\"" + node.processors[i] + "\",";
+    		}
+    		epls = epls + "]"
+    		
             data = data + "{" +
             		"\"id\":" + node.id + "," +
-            		"\"name\":" + "\"" + node.name + "\"," +
-            		"\"event_types\":" + node.eventType + "," +
-            		"\"epl\":" + node.processor + "," +
-            		"\"out_type\":" + "\"" + node.outEventType + "\"," +
-            		"\"num\":" + node.num + "," +
+            		"\"name\":\"" + node.name + "\"," +
+            		"\"event_types\":" + event_types + "," +
+            		"\"epl\":" + epls + "," +
+            		"\"out_type\":\"" + node.outEventType + "\"," +
             		"\"children\":[" + children + "]" +
             		"},"
         });
-    	data = data + "]}";
+    	data = data + "],\"kafka_server\":\"" + 
+    	kafkaInfo.server + "\",\"kafka_topics\":\"" + kafkaInfo.topics + "\"}";
     	
     	$.ajax({
 			type : "POST",
@@ -169,11 +261,9 @@ $(function () {
 			dataType : "json",
 			success : function(data) {
 				console.log("SUCCESS: ", data);
-				display(data);
 			},
 			error : function(e) {
 				console.log("ERROR: ", e);
-				display(e);
 			},
 			done : function(e) {
 				console.log("DONE");
@@ -181,37 +271,5 @@ $(function () {
 		});
 
     });
-
-    function showList() {
-        $("#graph_panel").hide();
-        $("#node_configuration").hide();
-        $("#node_table").empty();
-        $("#node_table").append("<tr><th>Name</th><th>Event Type</th><th>Event Processor</th><th>Output Event Type</th><th>Operations</th></tr>");
-        model.forEachByTopoBreadthFirstSearch(function(node){
-            $("#node_table").append(
-                "<tr>"+
-                "<td>"+node.name+"</td>"+
-                "<td>"+node.eventType+"</td>"+
-                "<td>"+node.processor+"</td>"+
-                "<td>"+node.outEventType+"</td>"+
-                "<td id='"+node.id+"'><a href='#'>edit</a></td>"+
-                "</tr>");
-        });
-        $("td:contains('edit')").click(function () {
-            var nodeid = $(this).attr("id");
-            currentNode = model.getById(nodeid);
-            eventNum = 0;
-            eventProcessor = 0;
-            eventArray = new Array();
-            $("#node_name_input").val(currentNode.name);
-            $("#node_num").val("");
-            $("#out_type").val("");
-            $(".event-processor").remove();
-            $(".event-type").remove();
-            $("#node_list").hide();
-            $("#node_configuration").show();
-        });
-        $("#node_list").show();
-    }
 
 });

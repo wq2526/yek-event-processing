@@ -37,7 +37,7 @@ public class DAGController {
 	public void startYarnClient(@RequestParam(value="data") String json) {
 		
 		exec = Executors.newCachedThreadPool();
-		exec.execute(new KafkaRunnable());
+		//exec.execute(new KafkaRunnable());
 			
 		LOG.info("send json to yarn client: " + json);	
 			
@@ -69,18 +69,18 @@ public class DAGController {
 		private KafkaProducerClient<String, String> producer;
 		
 		public KafkaRunnable() {
-			producer = new KafkaProducerClient<String, String>("10.109.253.127:9092");
-			producer.addTopic("node0-topic");
+			producer = new KafkaProducerClient<String, String>("10.109.253.145:9092");
+			producer.addTopic("node1-topic");
 		}
 
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			Random random = new Random();
+			/*Random random = new Random();
 			
 			try {
 				BufferedReader br = new BufferedReader(new FileReader("src/test/java/allData.txt"));
-				for(int i=0;i<10;i++){
+				for(int i=0;i<1000000;i++){
 				//while(br.readLine()!=null){
 					String s = br.readLine();
 					String[] str = s.split("\t");
@@ -90,24 +90,15 @@ public class DAGController {
 					
 					StringBuilder eventJson = new StringBuilder();
 					eventJson.append("{");
-					eventJson.append("\"event_type\":" + "\"CDataPoint\",");
+					eventJson.append("\"event_type\":" + "\"DataPoint\",");
 					eventJson.append("\"ts\":" + ts + ",");
-					eventJson.append("\"index\":\"" + str[1] + "\",");
-					eventJson.append("\"mf01\":\"" + str[2] + "\",");
-					eventJson.append("\"mf02\":\"" + str[3] + "\",");
-					eventJson.append("\"mf03\":\"" + str[4] + "\",");
-					eventJson.append("\"pc13\":\"" + str[5] + "\",");
-					eventJson.append("\"pc14\":\"" + str[6] + "\",");
-					eventJson.append("\"pc15\":\"" + str[7] + "\",");
-					eventJson.append("\"pc25\":\"" + str[8] + "\",");
-					eventJson.append("\"pc26\":\"" + str[9] + "\",");
-					eventJson.append("\"pc27\":\"" + str[10] + "\",");
-					eventJson.append("\"bm05\":" + random.nextInt(2) + ",");
-					eventJson.append("\"bm06\":" + random.nextInt(2) + ",");
-					eventJson.append("\"bm07\":" + random.nextInt(2) + ",");
-					eventJson.append("\"bm08\":" + random.nextInt(2) + ",");
-					eventJson.append("\"bm09\":" + random.nextInt(2) + ",");
-					eventJson.append("\"bm10\":" + random.nextInt(2) + "");
+					eventJson.append("\"index\":" + str[1] + ",");
+					eventJson.append("\"bm05\":" + str[2] + ",");
+					eventJson.append("\"bm06\":" + str[3] + ",");
+					eventJson.append("\"bm07\":" + str[4] + ",");
+					eventJson.append("\"bm08\":" + str[5] + ",");
+					eventJson.append("\"bm09\":" + str[6] + ",");
+					eventJson.append("\"bm10\":" + str[7] + "");
 					eventJson.append("}");
 					
 					producer.produce(null, eventJson.toString());
@@ -123,11 +114,11 @@ public class DAGController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
-				producer.produce(null, "{\"event_type\":\"quit\",\"quit\":\"node0\"}");
+				producer.produce(null, "{\"event_type\":\"quit\",\"quit\":\"nodestart\"}");
 				producer.close();
-			}
+			}*/
 			
-			//test();
+			test();
 			
 		}
 		
@@ -138,7 +129,7 @@ public class DAGController {
 			producer.produce(null, 
 					"{\"event_type\":\"person_event\", \"age\":200, \"name\":\"testname4\"}" 
 					);
-			producer.produce(null, "{\"event_type\":\"quit\",\"quit\":\"node0\"}");
+			producer.produce(null, "{\"event_type\":\"quit\",\"quit\":\"nodestart\"}");
 			producer.close();
 		}
 		
