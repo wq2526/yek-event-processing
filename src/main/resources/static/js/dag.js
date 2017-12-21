@@ -213,7 +213,7 @@ $(function () {
 
     $("#submit").click(function () {
     	
-    	var data = "{\"nodes\":[";
+    	var data = "{\"vertex\":[";
     	model.forEachByTopoBreadthFirstSearch(function(node){
     		var children = "";
     		node.forEachOutEdge(function(edge){

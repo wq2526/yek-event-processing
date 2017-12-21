@@ -18,6 +18,8 @@ public class KafkaProducerClient<K, V> {
 	private List<String> topics;
 	private Properties props;
 	
+	private boolean running;
+	
 	public KafkaProducerClient(String server){
 		
 		props = new Properties();
@@ -37,6 +39,8 @@ public class KafkaProducerClient<K, V> {
 		LOG.info("set up kafka producer with server " + server);
 		topics = new ArrayList<String>();
 		
+		running = true;
+		
 	}
 	
 	public void produce(K key, V value) {
@@ -51,6 +55,14 @@ public class KafkaProducerClient<K, V> {
 	public void addTopic(String topic) {
 		LOG.info("add topic " + topic + " for kafka producer");
 		topics.add(topic);
+	}
+	
+	public boolean getRunning() {
+		return running;
+	}
+	
+	public void setRunning(boolean running) {
+		this.running = running;
 	}
 	
 	public void close() {

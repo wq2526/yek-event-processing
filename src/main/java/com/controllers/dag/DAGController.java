@@ -76,13 +76,32 @@ public class DAGController {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			/*Random random = new Random();
+			//test2();
+			
+			test();
+			
+		}
+		
+		private void test() {
+			producer.produce(null, 
+					"{\"event_type\":\"person_event\", \"age\":100, \"name\":\"testname3\"}" 
+					);
+			producer.produce(null, 
+					"{\"event_type\":\"person_event\", \"age\":200, \"name\":\"testname4\"}" 
+					);
+			producer.produce(null, "{\"event_type\":\"quit\",\"quit\":\"nodestart\"}");
+			producer.close();
+		}
+		
+		private void test2() {
+			Random random = new Random();
 			
 			try {
 				BufferedReader br = new BufferedReader(new FileReader("src/test/java/allData.txt"));
+				String line = null;
 				for(int i=0;i<1000000;i++){
-				//while(br.readLine()!=null){
-					String s = br.readLine();
+				//while((line=br.readLine())!=null){
+					String s = line;
 					String[] str = s.split("\t");
 					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS+00:00");
 					Date date = simpleDateFormat.parse(str[0]);
@@ -116,21 +135,7 @@ public class DAGController {
 			} finally {
 				producer.produce(null, "{\"event_type\":\"quit\",\"quit\":\"nodestart\"}");
 				producer.close();
-			}*/
-			
-			test();
-			
-		}
-		
-		private void test() {
-			producer.produce(null, 
-					"{\"event_type\":\"person_event\", \"age\":100, \"name\":\"testname3\"}" 
-					);
-			producer.produce(null, 
-					"{\"event_type\":\"person_event\", \"age\":200, \"name\":\"testname4\"}" 
-					);
-			producer.produce(null, "{\"event_type\":\"quit\",\"quit\":\"nodestart\"}");
-			producer.close();
+			}
 		}
 		
 	}

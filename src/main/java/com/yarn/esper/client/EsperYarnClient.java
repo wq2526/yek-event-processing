@@ -1,10 +1,12 @@
 package com.yarn.esper.client;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -73,7 +75,7 @@ public class EsperYarnClient {
 	private String kafkaServer;
 
 	//event processing info
-	private String nodes;
+	private String vertexJson;
 	
 	public EsperYarnClient() {
 		conf = new YarnConfiguration();
@@ -82,54 +84,48 @@ public class EsperYarnClient {
 		yarnClient = YarnClient.createYarnClient();
 		yarnClient.init(conf);
 		
-		appName = "";
-		amPriority = 0;
-		amQueue = "";
-		amMemory = 16;
-		amVCores = 1;
+		Properties prop = new Properties();
+		InputStream input = EsperYarnClient.class.
+				getClassLoader().getResourceAsStream("yek.properties");
 		
-		appMasterJarPath = "";
-		appMasterMainClass = "";
+		try {
+			prop.load(input);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			LOG.error("read yek properties file error", e);
+		}
 		
-		containerMemory = 16;
-		containerVCores = 1;
-		containerPriority = 0;
+		appName = prop.getProperty("app.name");
+		amPriority = Integer.parseInt(prop.getProperty("app.priority"));
+		amQueue = prop.getProperty("app.queue");
+		amMemory = Integer.parseInt(prop.getProperty("app.memory"));
+		amVCores = Integer.parseInt(prop.getProperty("app.vcore"));
+		
+		appMasterJarPath = prop.getProperty("app.jar.path");
+		appMasterMainClass = prop.getProperty("app.main.class");
+		
+		containerMemory = Integer.parseInt(prop.getProperty("container.memory"));
+		containerVCores = Integer.parseInt(prop.getProperty("container.vcore"));
+		containerPriority = Integer.parseInt(prop.getProperty("container.priority"));
 		
 		clientStartTime = System.currentTimeMillis();
-		clientTimeOut = 120000;
+		clientTimeOut = Integer.parseInt(prop.getProperty("time.out"));
 		
-		esperEngineJarPath = "";
-		esperEngineMainClass = "";
+		esperEngineJarPath = prop.getProperty("app.queue");
+		esperEngineMainClass = prop.getProperty("app.queue");
 		
-		kafkaServer = "";
+		kafkaServer = prop.getProperty("kafka.host") + ":" + prop.getProperty("kafka.port");
 
-		nodes = "";
+		vertexJson = "";
 		
 	}
 	
 	private boolean init(String json) {
 		
-		kafkaServer = "\'10.109.253.145:9092\'";
+		vertexJson = "\'" + json.replace("\"", "%").replace("\'", "$") + "\'";
 		
-		nodes = "\'" + json.replace("\"", "%").replace("\'", "$") + "\'";
-		
-		appName = "CEPAPP";
-		amPriority = 0;
-		amQueue = "default";
-		amMemory = 128;
-		amVCores = 1;
-		
-		appMasterJarPath = "/usr/hadoop-yarn/apps/yarn-esper-application-master.jar";
-		appMasterMainClass = "com.yarn.esper.app.EsperApplicationMaster";
 		/*appMasterJarPath = "hdfs://10.109.253.145:9000/hadoop-yarn/YarnTest.jar";
 		appMasterMainClass = "com.yarn.client.YarnApplicationMaster";*/
-		
-		containerMemory = 128;
-		containerVCores = 1;
-		containerPriority = 0;
-		
-		esperEngineJarPath = "/usr/esper/apps/esper-kafka-engine.jar";
-		esperEngineMainClass = "com.esper.kafka.adapter.EsperKafkaAdapter";
 		
 		return true;
 	}
@@ -252,7 +248,7 @@ public class EsperYarnClient {
 		commands.add("--esper_jar_path " + esperEngineJarPath);
 		commands.add("--esper_main_class " + esperEngineMainClass);
 		commands.add("--kafka_server " + kafkaServer);
-		commands.add("--nodes " + nodes);
+		commands.add("--vertex_json " + vertexJson);
 		
 		LOG.info("Completed setting up app master command " + commands.toString());
 		
