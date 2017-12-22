@@ -115,7 +115,7 @@ $(function () {
     $("#add").click(function(){
         var node = new Q.Node();
          index++;
-         node.name = "node" + index;
+         node.name = "vertex" + index;
          node.image = "node.svg";
          node.eventTypes = new Array();
          node.processors = new Array();
