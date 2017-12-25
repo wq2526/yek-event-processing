@@ -71,6 +71,9 @@ public class EsperYarnClient {
 	private String esperEngineJarPath;
 	private String esperEngineMainClass;
 	
+	private String monitorJarPath;
+	private String monitorMainClass;
+	
 	//Kafka server host
 	private String kafkaServer;
 
@@ -111,8 +114,11 @@ public class EsperYarnClient {
 		clientStartTime = System.currentTimeMillis();
 		clientTimeOut = Integer.parseInt(prop.getProperty("time.out"));
 		
-		esperEngineJarPath = prop.getProperty("app.queue");
-		esperEngineMainClass = prop.getProperty("app.queue");
+		esperEngineJarPath = prop.getProperty("cep.jar.path");
+		esperEngineMainClass = prop.getProperty("cep.main.class");
+		
+		monitorJarPath = prop.getProperty("monitor.jar.path");
+		monitorMainClass = prop.getProperty("monitor.main.class");
 		
 		kafkaServer = prop.getProperty("kafka.host") + ":" + prop.getProperty("kafka.port");
 
@@ -247,7 +253,8 @@ public class EsperYarnClient {
 		commands.add("--request_priority " + String.valueOf(containerPriority));
 		commands.add("--esper_jar_path " + esperEngineJarPath);
 		commands.add("--esper_main_class " + esperEngineMainClass);
-		commands.add("--kafka_server " + kafkaServer);
+		commands.add("--monitor_jar_path " + monitorJarPath);
+		commands.add("--monitor_main_class " + monitorMainClass);
 		commands.add("--vertex_json " + vertexJson);
 		
 		LOG.info("Completed setting up app master command " + commands.toString());
