@@ -14,16 +14,16 @@ $(function () {
     
     $("#right_panel").hide();
     $("#mid_panel").width("80%");
-    $("#input_configuration").hide();
+    $("#kafka_configuration").hide();
     
     $("#vertexConfig").click(function(){
     	$("#graph_panel").show();
-    	$("#input_configuration").hide();
+    	$("#kafka_configuration").hide();
     	$("#mid_title").children("li").html("DAG");
     });
     
     $("#inputData").click(function(){
-    	$("#input_configuration").show();
+    	$("#kafka_configuration").show();
     	$("#graph_panel").hide();	
     	$("#mid_title").children("li").html("Kafka");
     });
@@ -207,8 +207,10 @@ $(function () {
     });
     
     $("#kafka_save").click(function(){
-    	kafkaInfo.server = $("#kafka_server").val();
-    	kafkaInfo.topics = $("#topic_list").val();
+    	kafkaInfo.inputServer = $("#input_kafka_server").val();
+    	kafkaInfo.inputTopics = $("#input_topic_list").val();
+    	kafkaInfo.outputServer = $("#output_kafka_server").val();
+    	kafkaInfo.outputTopics = $("#output_topic_list").val();
     });
 
     $("#submit").click(function () {
@@ -251,8 +253,9 @@ $(function () {
             		"\"children\":[" + children + "]" +
             		"},"
         });
-    	data = data + "],\"kafka_server\":\"" + 
-    	kafkaInfo.server + "\",\"kafka_topics\":\"" + kafkaInfo.topics + "\"}";
+    	data = data + "],\"kafka_input_server\":\"" + 
+    	kafkaInfo.inputServer + "\",\"kafka_input_topics\":\"" + kafkaInfo.inputTopics + 
+    	"\", \"kafka_output_server\":\"" + kafkaInfo.outputServer + "\", \"kafka_output_topics\":\"" + kafkaInfo.outputTopics +"\"}";
     	
     	$.ajax({
 			type : "POST",

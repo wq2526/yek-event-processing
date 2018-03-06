@@ -73,15 +73,23 @@
                 <div id="canvas"></div>
             </div>
         </div>
-        <div id="input_configuration">
+        <div id="kafka_configuration">
         	<form>
         		<div class="form-group">
-                    <label>Kafka服务器地址</label>
-                    <input type="text" class="form-control" id="kafka_server" placeholder="Kafka Server">
+                    <label>输入Kafka服务器地址</label>
+                    <input type="text" class="form-control" id="input_kafka_server" placeholder="host:port">
                 </div>
         		<div class="form-group">
-                    <label>主题列表（以逗号分隔）</label>
-                    <input type="text" class="form-control" id="topic_list" placeholder="topic1,topic2,...">
+                    <label>输入主题列表（以逗号分隔）</label>
+                    <input type="text" class="form-control" id="input_topic_list" placeholder="topic1,topic2,...">
+                </div>
+                <div class="form-group">
+                    <label>输出Kafka服务器地址</label>
+                    <input type="text" class="form-control" id="output_kafka_server" placeholder="host:port">
+                </div>
+        		<div class="form-group">
+                    <label>输出主题列表（以逗号分隔）</label>
+                    <input type="text" class="form-control" id="output_topic_list" placeholder="topic1,topic2,...">
                 </div>
         		<button type="button" class="btn btn-default" id="kafka_save">保存</button>
         	</form>
