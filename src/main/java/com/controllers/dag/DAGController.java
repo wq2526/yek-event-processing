@@ -70,7 +70,7 @@ public class DAGController {
 		
 		public KafkaRunnable() {
 			producer = new KafkaProducerClient<String, String>("10.109.253.145:9092");
-			producer.addTopic("node1-topic");
+			producer.addTopic("vertex1-topic");
 		}
 
 		@Override
@@ -83,13 +83,16 @@ public class DAGController {
 		}
 		
 		private void test() {
-			producer.produce(null, 
-					"{\"event_type\":\"person_event\", \"age\":100, \"name\":\"testname3\"}" 
-					);
+			for(int i=0;i<1000;i++){
+				producer.produce(null, 
+						"{\"event_type\":\"person_event\", \"age\":100, \"name\":\"testname3\"}" 
+						);
+			}
+			
 			producer.produce(null, 
 					"{\"event_type\":\"person_event\", \"age\":200, \"name\":\"testname4\"}" 
 					);
-			producer.produce(null, "{\"event_type\":\"quit\",\"quit\":\"nodestart\"}");
+			producer.produce(null, "{\"event_type\":\"quit\",\"quit\":\"vertexstart\"}");
 			producer.close();
 		}
 		
